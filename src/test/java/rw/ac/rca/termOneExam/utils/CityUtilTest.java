@@ -1,10 +1,12 @@
 package rw.ac.rca.termOneExam.utils;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import rw.ac.rca.termOneExam.domain.City;
 import rw.ac.rca.termOneExam.repository.ICityRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -15,46 +17,54 @@ public class CityUtilTest {
     private ICityRepository cityRepository;
 
     @Test
-    public void noCityWithWeatherMoreThan40_test(){
-        int citiesWithWeatherMoreThan40 = 0;
+    public void noCityHasWeatherMoreThan40() {
+        boolean result = false;
         List<City> cities = cityRepository.findAll();
-        for (City city: cities)
-            if(city.getWeather() > 40)
-                citiesWithWeatherMoreThan40 ++;
+        for (City city : cities)
+            if (city.getWeather() > 40)
+                result = true;
 
 
-        assertEquals(0, citiesWithWeatherMoreThan40);
+        assertEquals(false, result);
     }
 
     @Test
-    public void noCityWithWeatherLessThan10_test(){
-        int citiesWithWeatherLessThan10 = 0;
+    public void noCityHasWeatherLessThan10() {
+        boolean result = false;
         List<City> cities = cityRepository.findAll();
-        for (City city: cities)
-            if(city.getWeather() < 10)
-                citiesWithWeatherLessThan10 --;
+        for (City city : cities)
+            if (city.getWeather() < 10)
+                result = true;
 
 
-        assertEquals(0, citiesWithWeatherLessThan10);
+        assertEquals(false, result);
     }
 
     @Test
-    public void CitiesContainMusanze() {
+    public void CitiesContainMusanzeAndKigali() {
         boolean found = false;
         List<City> cities = cityRepository.findAll();
-        assertEquals(true, cityRepository.existsByName("Musanze"));
+        assertEquals(true, cityRepository.existsByName("Musanze") && cityRepository.existsByName("Kigali"));
     }
 
     @Test
-    public void CitiesContainKigali() {
-        boolean found = false;
-        List<City> cities = cityRepository.findAll();
-        assertEquals(true, cityRepository.existsByName("Kigali"));
+    public void testMocking() {
+        List<City> mockedList = Mockito.mock(ArrayList.class);
+        City city = new City("Kigali", 24);
+        mockedList.add(city);
+        Mockito.verify(mockedList).add(city);
+
+        assertEquals(0, mockedList.size());
     }
 
+    @Test
+    public void testSpying() {
+        List<City> spyList = Mockito.spy(ArrayList.class);
+        City city = new City("Kigali", 24);
+        spyList.add(city);
+        Mockito.verify(spyList).add(city);
 
-
-
-
-
+        assertEquals(1, spyList.size());
+    }
 }
+

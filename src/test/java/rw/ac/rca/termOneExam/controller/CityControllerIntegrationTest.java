@@ -58,7 +58,6 @@ public class CityControllerIntegrationTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals("Kayonza", Objects.requireNonNull(response.getBody()).getName());
     }
-    
 
 
 

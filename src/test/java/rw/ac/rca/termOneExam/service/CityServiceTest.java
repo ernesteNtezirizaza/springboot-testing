@@ -37,22 +37,21 @@ public class CityServiceTest {
     public void getOneCityWhenIdIsFound() {
         when(cityRepositoryMock.findById(anyLong())).thenReturn(Optional.of(new City(105L, "Huye", 130)));
 
-        assertEquals("Kaisa", cityService.getById(1L).get());
+        assertEquals("Huye", cityService.getById(105L).get());
     }
 
     @Test
-    public void getOneCityWhenIdIsNotFound() {
-        when(cityRepositoryMock.findById(anyLong())).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(APICustomResponse.class, () -> cityService.getById(1L));
-
-        assertEquals("City with this id not found", exception.getMessage());
+    public void getById_fail() {
+        Long id = 3000L;
+        when(cityRepositoryMock.findById(id)).thenReturn(Optional.empty());
+        Optional<City> city = cityService.getById(id);
+        assertTrue(city == null);
     }
 
     @Test
     public void saveCityTest() {
-        CreateCityDTO dto = new CreateCityDTO("Nyamagabe" , 30);
-        City city = new City(109L,"Rulindo", 130);
+        CreateCityDTO dto = new CreateCityDTO("Nyamagabe" , 130);
+        City city = new City(109L,"Nyamagabe", 130);
         when(cityRepositoryMock.save(any(City.class))).thenReturn(city);
         assertEquals(130, cityService.save(dto).getName());
     }
@@ -60,8 +59,8 @@ public class CityServiceTest {
     @Test
     public void saveDuplicateCityTest() {
         when(cityRepositoryMock.existsByName(anyString())).thenReturn(true);
-        CreateCityDTO dto = new CreateCityDTO("Nyamagabe" , 30);
-        Exception exception = (Exception) assertThrows(APICustomResponse.class, () -> cityService.save(dto));
+        CreateCityDTO dto = new CreateCityDTO("Nyamagabe" , 130);
+        Exception exception = assertThrows(APICustomResponse.class, () -> cityService.save(dto));
 
         assertEquals("City already taken", exception.getMessage());
     }
